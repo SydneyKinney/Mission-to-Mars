@@ -54,7 +54,7 @@ browser = Browser('chrome', **executable_path, headless=False)
 
 # In[11]:
 # Visit the mars nasa news site
-url = 'https://redplanetscience.com'
+url = 'https://mars.nasa.gov/news/'
 browser.visit(url)
 # Optional delay for loading the page
 browser.is_element_present_by_css('div.list_text', wait_time=1)
@@ -81,7 +81,7 @@ news_p
 
 # In[16]:
 # Visit URL
-url = 'https://spaceimages-mars.com'
+url = 'https://data-class-jpl-space.s3.amazonaws.com/JPL_Space/index.html'
 browser.visit(url)
 
 # In[17]:
@@ -93,6 +93,7 @@ full_image_elem.click()
 # Parse the resulting html with soup
 html = browser.html
 img_soup = soup(html, 'html.parser')
+img_soup
 
 # In[19]:
 # Find the relative image url
@@ -101,17 +102,34 @@ img_url_rel
 
 # In[20]:
 # Use the base URL to create an absolute URL
-img_url = f'https://spaceimages-mars.com/{img_url_rel}'
+img_url = f'https://data-class-jpl-space.s3.amazonaws.com/JPL_Space{img_url_rel}'
 img_url
 
 # In[21]:
-df = pd.read_html('https://galaxyfacts-mars.com')[0]
+df = pd.read_html('https://data-class-mars-facts.s3.amazonaws.com/Mars_Facts/index.html')[0]
 df.columns=['description', 'Mars', 'Earth']
 df.set_index('description', inplace=True)
 df
 
 # In[22]:
 df.to_html()
+
+# ### Mars Weather
+
+
+# Visit the weather website\n",
+url = 'https://mars.nasa.gov/insight/weather/'
+browser.visit(url)
+
+# Parse the data\n",
+html = browser.html
+weather_soup = soup(html, 'html.parser')
+
+
+# Scrape the Daily Weather Report table\n",
+weather_table = weather_soup.find('table', class_='mb_table')
+print(weather_table.prettify())
+
 
 # In[23]:
 browser.quit()
